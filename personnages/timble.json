@@ -1,0 +1,163 @@
+{
+  "app": "Fauche Lumiere - Compagnon DND",
+  "version": 1,
+  "characterId": "timble",
+  "characterName": "Timble",
+  "exportedAt": "2026-05-12T16:37:42.309Z",
+  "state": {
+    "activeTab": "sheet",
+    "character": {
+      "name": "Timble",
+      "ancestry": "Halfelin",
+      "class": "Roublard",
+      "level": 3,
+      "background": "Enfant des rues",
+      "alignment": "Chaotique bon",
+      "stats": {
+        "str": 10,
+        "dex": 16,
+        "con": 14,
+        "int": 12,
+        "wis": 10,
+        "cha": 14
+      },
+      "ac": 15,
+      "hp": 22,
+      "hpMax": 22,
+      "proficiency": 2,
+      "speed": 9,
+      "initiativeBonus": 3,
+      "lastSession": "La piste traverse les anciennes citernes. Le symbole de la porte ressemble a un d20 fendu par une etoile."
+    },
+    "diceMode": "normal",
+    "rollModifier": 0,
+    "rolls": [],
+    "encounter": {
+      "activeTurn": 0,
+      "combatants": [
+        {
+          "id": "e95b6ecb-36d7-41dc-8c75-8030e65fea12",
+          "name": "Timble",
+          "initiative": 17,
+          "hp": 22
+        },
+        {
+          "id": "f6d4bddc-048a-4c87-9931-cf836a68adf5",
+          "name": "Sentinelle d'os",
+          "initiative": 13,
+          "hp": 18
+        },
+        {
+          "id": "2f04d8e7-8e88-4d36-a3c0-832c01344d9c",
+          "name": "Meneur gobelin",
+          "initiative": 9,
+          "hp": 11
+        }
+      ],
+      "creatures": [
+        {
+          "id": "6bdc4db6-f242-4c88-9cde-2e33896cba57",
+          "name": "Sentinelle d'os",
+          "hp": 18,
+          "weaknesses": [
+            "bludgeoning",
+            "radiant"
+          ],
+          "note": "Semble moins stable apres les coups contondants."
+        }
+      ],
+      "weapons": [
+        {
+          "id": "52bcdaa0-47bc-487e-8c51-6c3149dc00bd",
+          "name": "Rapiere",
+          "damage": "1d8 + DEX",
+          "damageType": "piercing",
+          "note": "Finesse"
+        },
+        {
+          "id": "2e4ad5f0-e723-4404-a1ba-6e4bc1879e03",
+          "name": "Arc court",
+          "damage": "1d6 + DEX",
+          "damageType": "piercing",
+          "note": "Distance 24/96 m"
+        }
+      ],
+      "injuries": {
+        "head": false,
+        "torso": false,
+        "left-arm": false,
+        "right-arm": false,
+        "left-leg": false,
+        "right-leg": false
+      },
+      "slots": {
+        "1": {
+          "used": 0,
+          "max": 2
+        },
+        "2": {
+          "used": 0,
+          "max": 2
+        },
+        "3": {
+          "used": 0,
+          "max": 0
+        },
+        "4": {
+          "used": 0,
+          "max": 0
+        },
+        "5": {
+          "used": 0,
+          "max": 0
+        },
+        "6": {
+          "used": 0,
+          "max": 0
+        },
+        "7": {
+          "used": 0,
+          "max": 0
+        },
+        "8": {
+          "used": 0,
+          "max": 0
+        },
+        "9": {
+          "used": 0,
+          "max": 0
+        }
+      }
+    },
+    "journal": {
+      "quest": "Retrouver la clef du sanctuaire de Lune-Basse",
+      "quests": [
+        {
+          "id": "5f7b676a-9adc-4683-a87a-58c1691072b3",
+          "title": "Retrouver la clef du sanctuaire de Lune-Basse",
+          "status": "en-cours"
+        }
+      ],
+      "notes": "Le groupe a trouve un autel grave d'une etoile brisee.",
+      "feelings": "Aelis se mefie de la guilde des Lanternes, mais veut encore croire qu'ils peuvent aider.",
+      "rareItems": "Dague +1\nPotion de soins",
+      "valuables": "Dette envers la guilde des Lanternes.",
+      "coins": {
+        "pp": 0,
+        "gp": 42,
+        "ep": 3,
+        "sp": 18,
+        "cp": 55
+      }
+    },
+    "grimoire": {
+      "knownSpellIds": [
+        "minor-illusion",
+        "mage-hand",
+        "shield",
+        "misty-step"
+      ],
+      "homebrewSpells": []
+    }
+  }
+}
