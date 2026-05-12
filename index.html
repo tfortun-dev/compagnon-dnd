@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fauche Lumiere - Compagnon DND</title>
+    <meta
+      name="description"
+      content="Compagnon DND accessible avec fiche, combat, journal et grimoire."
+    />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#111315" />
+    <link rel="icon" href="assets/icon-192.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Aller au contenu</a>
+
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navigation principale">
+        <div class="brand">
+          <img src="assets/fauche-lumiere-logo.png" width="96" height="96" alt="Fauche Lumiere" />
+          <div>
+            <p class="eyebrow">Compagnon DND</p>
+            <h1>Fauche Lumiere</h1>
+          </div>
+        </div>
+
+        <nav class="nav-list" role="tablist" aria-label="Onglets">
+          <button id="tab-sheet" class="nav-link active" type="button" role="tab" aria-selected="true" aria-controls="panel-sheet" data-tab="sheet">Fiche</button>
+          <button id="tab-combat" class="nav-link" type="button" role="tab" aria-selected="false" aria-controls="panel-combat" data-tab="combat">Combat</button>
+          <button id="tab-journal" class="nav-link" type="button" role="tab" aria-selected="false" aria-controls="panel-journal" data-tab="journal">Journal</button>
+          <button id="tab-spells" class="nav-link" type="button" role="tab" aria-selected="false" aria-controls="panel-spells" data-tab="spells">Grimoire</button>
+        </nav>
+
+        <section class="character-switcher" aria-label="Gestion du personnage actif">
+          <label>
+            Personnage actif
+            <select id="character-select" aria-label="Personnage actif"></select>
+          </label>
+          <div class="character-actions">
+            <button type="button" id="export-character-json">Exporter JSON</button>
+            <button type="button" id="import-character-json">Importer JSON</button>
+            <input id="import-character-file" type="file" accept="application/json,.json" hidden />
+          </div>
+        </section>
+
+        <section class="status-panel" aria-labelledby="status-title">
+          <h2 id="status-title">Etat</h2>
+          <dl>
+            <div>
+              <dt>CA</dt>
+              <dd id="summary-ac">15</dd>
+            </div>
+            <div>
+              <dt>PV</dt>
+              <dd><span id="summary-hp">22</span>/<span id="summary-hp-max">22</span></dd>
+            </div>
+            <div>
+              <dt>Sorts</dt>
+              <dd id="summary-spells">0</dd>
+            </div>
+          </dl>
+        </section>
+      </aside>
+
+      <main id="main" class="workspace">
+        <section id="panel-sheet" class="tab-panel active" role="tabpanel" aria-labelledby="tab-sheet" data-panel="sheet">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Fiche principale</p>
+              <h2>Personnage</h2>
+            </div>
+            <button class="icon-button" type="button" id="reset-character" title="Reinitialiser la fiche" aria-label="Reinitialiser la fiche">
+              <span aria-hidden="true">↺</span>
+            </button>
+          </div>
+
+          <div class="panel-grid two-columns">
+            <section class="panel sheet-panel" aria-labelledby="identity-title">
+              <div class="panel-heading">
+                <h3 id="identity-title">Identite</h3>
+              </div>
+              <form class="form-grid identity-form" id="character-form">
+                <label>
+                  Nom
+                  <input id="character-name" name="name" autocomplete="off" />
+                </label>
+                <label>
+                  Race / peuple
+                  <input id="character-ancestry" name="ancestry" autocomplete="off" />
+                </label>
+                <label>
+                  Classe
+                  <select id="character-class" name="class">
+                    <option>Artificier</option>
+                    <option>Barbare</option>
+                    <option>Barde</option>
+                    <option>Clerc</option>
+                    <option>Druide</option>
+                    <option>Ensorceleur</option>
+                    <option>Guerrier</option>
+                    <option>Magicien</option>
+                    <option>Moine</option>
+                    <option>Occultiste</option>
+                    <option>Paladin</option>
+                    <option>Rodeur</option>
+                    <option>Roublard</option>
+                  </select>
+                </label>
+                <label>
+                  Niveau
+                  <input id="character-level" name="level" type="number" min="1" max="20" inputmode="numeric" />
+                </label>
+                <label>
+                  Historique
+                  <input id="character-background" name="background" autocomplete="off" />
+                </label>
+                <label>
+                  Alignement
+                  <input id="character-alignment" name="alignment" autocomplete="off" />
+                </label>
+              </form>
+            </section>
+
+            <section class="panel" aria-labelledby="vitals-title">
+              <div class="panel-heading">
+                <h3 id="vitals-title">Defense et ressources</h3>
+              </div>
+              <div class="form-grid vitals-form">
+                <label>
+                  Classe d'armure
+                  <input id="armor-class" type="number" min="1" max="30" inputmode="numeric" />
+                </label>
+                <label>
+                  PV actuels
+                  <input id="hit-points" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  PV max
+                  <input id="hit-points-max" type="number" min="1" inputmode="numeric" />
+                </label>
+                <label>
+                  Bonus de maitrise
+                  <input id="proficiency" type="number" min="2" max="6" inputmode="numeric" />
+                </label>
+                <label>
+                  Vitesse
+                  <input id="speed" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  Initiative
+                  <input id="initiative-bonus" type="number" inputmode="numeric" />
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <section class="panel stats-panel" aria-labelledby="stats-title">
+            <div class="panel-heading">
+              <h3 id="stats-title">Caracteristiques</h3>
+            </div>
+            <div class="stat-grid" aria-label="Caracteristiques">
+              <label class="stat-tile">
+                <span>FOR</span>
+                <input id="stat-str" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-str">+0</strong>
+              </label>
+              <label class="stat-tile">
+                <span>DEX</span>
+                <input id="stat-dex" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-dex">+0</strong>
+              </label>
+              <label class="stat-tile">
+                <span>CON</span>
+                <input id="stat-con" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-con">+0</strong>
+              </label>
+              <label class="stat-tile">
+                <span>INT</span>
+                <input id="stat-int" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-int">+0</strong>
+              </label>
+              <label class="stat-tile">
+                <span>SAG</span>
+                <input id="stat-wis" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-wis">+0</strong>
+              </label>
+              <label class="stat-tile">
+                <span>CHA</span>
+                <input id="stat-cha" type="number" min="1" max="30" inputmode="numeric" />
+                <strong id="mod-cha">+0</strong>
+              </label>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="last-session-title">
+            <div class="panel-heading">
+              <h3 id="last-session-title">Resume de la derniere session</h3>
+            </div>
+            <label class="full-field">
+              <span>Derniers evenements</span>
+              <textarea id="last-session-summary" rows="7"></textarea>
+            </label>
+          </section>
+        </section>
+
+        <section id="panel-combat" class="tab-panel" role="tabpanel" aria-labelledby="tab-combat" data-panel="combat" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Rencontre</p>
+              <h2>Combat</h2>
+            </div>
+            <button class="primary-button" type="button" id="next-turn">Tour suivant</button>
+          </div>
+
+          <div class="panel-grid two-columns combat-priority-grid">
+            <section class="panel initiative-panel" aria-labelledby="initiative-title">
+              <div class="panel-heading">
+                <h3 id="initiative-title">Initiative</h3>
+              </div>
+              <form class="initiative-form" id="initiative-form">
+                <label>
+                  Nom
+                  <input id="combatant-name" autocomplete="off" />
+                </label>
+                <label>
+                  Init.
+                  <input id="combatant-init" type="number" inputmode="numeric" />
+                </label>
+                <label>
+                  PV
+                  <input id="combatant-hp" type="number" inputmode="numeric" />
+                </label>
+                <button type="submit">Ajouter</button>
+              </form>
+              <div id="turn-order" class="turn-order" role="list" aria-label="Ordre d'initiative"></div>
+            </section>
+
+            <section class="panel" aria-labelledby="creatures-title">
+              <div class="panel-heading">
+                <h3 id="creatures-title">Creatures</h3>
+              </div>
+              <form id="creature-form" class="creature-form">
+                <div class="form-grid">
+                  <label>
+                    Nom
+                    <input id="creature-name" autocomplete="off" />
+                  </label>
+                  <label>
+                    PV
+                    <input id="creature-hp" type="number" inputmode="numeric" />
+                  </label>
+                </div>
+                <fieldset class="weakness-picker">
+                  <legend>Faiblesses</legend>
+                  <div id="weakness-options" class="weakness-options"></div>
+                </fieldset>
+                <label>
+                  Annotation
+                  <textarea id="creature-note" rows="3"></textarea>
+                </label>
+                <button type="submit" class="primary-button">Ajouter une creature</button>
+              </form>
+              <div id="creature-list" class="card-list" role="list"></div>
+            </section>
+          </div>
+
+          <div class="panel-grid two-columns combat-priority-grid">
+            <section class="panel" aria-labelledby="weapons-title">
+              <div class="panel-heading">
+                <h3 id="weapons-title">Armes detenues</h3>
+              </div>
+              <div class="weapon-library-picker">
+                <label>
+                  Ajouter une arme courante
+                  <select id="weapon-library-select"></select>
+                </label>
+                <button type="button" id="add-library-weapon">Ajouter l'arme</button>
+              </div>
+              <form id="weapon-form" class="weapon-form">
+                <div class="form-grid">
+                  <label>
+                    Arme homebrew
+                    <input id="weapon-name" autocomplete="off" />
+                  </label>
+                  <label>
+                    Degats
+                    <input id="weapon-damage" autocomplete="off" placeholder="ex. 1d8 + FOR" />
+                  </label>
+                </div>
+                <div class="form-grid">
+                  <label>
+                    Type de degats
+                    <select id="weapon-damage-type">
+                      <option value="">A definir</option>
+                      <option value="bludgeoning">Contondant</option>
+                      <option value="piercing">Perforant</option>
+                      <option value="slashing">Tranchant</option>
+                      <option value="fire">Feu</option>
+                      <option value="cold">Froid</option>
+                      <option value="lightning">Foudre</option>
+                      <option value="poison">Poison</option>
+                      <option value="radiant">Radiant</option>
+                      <option value="necrotic">Necrotique</option>
+                      <option value="force">Force</option>
+                      <option value="psychic">Psychique</option>
+                      <option value="thunder">Tonnerre</option>
+                      <option value="acid">Acide</option>
+                    </select>
+                  </label>
+                  <label>
+                    Notes
+                    <input id="weapon-note" autocomplete="off" />
+                  </label>
+                </div>
+                <button type="submit">Ajouter une arme homebrew</button>
+              </form>
+              <div id="weapon-list" class="card-list" role="list"></div>
+            </section>
+
+            <section class="panel" aria-labelledby="combat-spells-title">
+              <div class="panel-heading">
+                <h3 id="combat-spells-title">Sorts maitrises</h3>
+              </div>
+              <div id="combat-spell-list" class="spell-short-list" role="list"></div>
+            </section>
+          </div>
+
+          <div class="panel-grid two-columns combat-secondary-grid">
+            <section class="panel" aria-labelledby="slots-title">
+              <div class="panel-heading">
+                <h3 id="slots-title">Emplacements de sorts</h3>
+              </div>
+              <div id="spell-slots" class="slot-grid"></div>
+            </section>
+
+            <section class="panel injury-panel" aria-labelledby="injury-title">
+              <div class="panel-heading">
+                <h3 id="injury-title">Blessures du personnage</h3>
+                <button type="button" id="clear-injuries">Effacer</button>
+              </div>
+              <div class="body-map" aria-label="Schema des blessures">
+                <svg viewBox="0 0 160 280" role="img" aria-labelledby="body-map-title">
+                  <title id="body-map-title">Schema simplifie du corps</title>
+                  <circle data-body-part="head" cx="80" cy="32" r="23"></circle>
+                  <rect data-body-part="torso" x="54" y="60" width="52" height="88" rx="18"></rect>
+                  <rect data-body-part="left-arm" x="24" y="66" width="22" height="86" rx="11"></rect>
+                  <rect data-body-part="right-arm" x="114" y="66" width="22" height="86" rx="11"></rect>
+                  <rect data-body-part="left-leg" x="54" y="150" width="22" height="102" rx="11"></rect>
+                  <rect data-body-part="right-leg" x="84" y="150" width="22" height="102" rx="11"></rect>
+                </svg>
+                <div id="injury-controls" class="injury-controls"></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-grid combat-dice-grid">
+            <section class="panel dice-panel" aria-labelledby="dice-title">
+              <div class="panel-heading">
+                <h3 id="dice-title">Des</h3>
+                <div class="segmented" role="group" aria-label="Mode de jet">
+                  <button type="button" data-mode="normal" class="active">Normal</button>
+                  <button type="button" data-mode="advantage">Avantage</button>
+                  <button type="button" data-mode="disadvantage">Desav.</button>
+                </div>
+              </div>
+
+              <div class="roll-tray" aria-label="Des rapides">
+                <button type="button" data-die="4">d4</button>
+                <button type="button" data-die="6">d6</button>
+                <button type="button" data-die="8">d8</button>
+                <button type="button" data-die="10">d10</button>
+                <button type="button" data-die="12">d12</button>
+                <button type="button" data-die="20" class="prime-die">d20</button>
+                <button type="button" data-die="100">d100</button>
+              </div>
+
+              <div class="roll-controls">
+                <label>
+                  Modificateur
+                  <input id="roll-modifier" type="number" inputmode="numeric" />
+                </label>
+                <button type="button" id="roll-attack" class="primary-button">Attaque d20</button>
+                <button type="button" id="roll-save">Sauvegarde</button>
+              </div>
+
+              <output id="roll-output" class="roll-output" aria-live="polite">
+                <span class="roll-total">20</span>
+                <span class="roll-detail">Pret pour l'aventure.</span>
+              </output>
+              <ol id="roll-history" class="roll-history" aria-label="Historique des jets"></ol>
+            </section>
+          </div>
+        </section>
+
+        <section id="panel-journal" class="tab-panel" role="tabpanel" aria-labelledby="tab-journal" data-panel="journal" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Campagne</p>
+              <h2>Journal</h2>
+            </div>
+            <button type="button" id="export-notes">Exporter</button>
+          </div>
+
+          <div class="panel-grid two-columns">
+            <section class="panel journal-panel" aria-labelledby="notes-title">
+              <div class="panel-heading">
+                <h3 id="notes-title">Notes d'aventure</h3>
+              </div>
+              <form id="quest-form" class="quest-form">
+                <label>
+                  Nouvelle quete
+                  <input id="quest-title" autocomplete="off" />
+                </label>
+                <label>
+                  Statut
+                  <select id="quest-status">
+                    <option value="en-cours">En cours</option>
+                    <option value="terminee">Terminee</option>
+                    <option value="oubliee">Oubliee</option>
+                    <option value="delaissee">Delaissee</option>
+                    <option value="en-attente">En attente</option>
+                  </select>
+                </label>
+                <label class="quest-note-field">
+                  Notes de quete
+                  <textarea id="quest-note" rows="3" placeholder="Indice, PNJ, lieu, objectif..."></textarea>
+                </label>
+                <button type="submit">Ajouter la quete</button>
+              </form>
+              <div id="quest-list" class="card-list quest-list" role="list"></div>
+              <label>
+                Notes libres
+                <textarea id="session-notes" rows="10"></textarea>
+              </label>
+              <label>
+                Ressenti du personnage
+                <textarea id="character-feelings" rows="5"></textarea>
+              </label>
+            </section>
+
+            <section class="panel journal-panel" aria-labelledby="inventory-title">
+              <div class="panel-heading">
+                <h3 id="inventory-title">Tresor et objets</h3>
+              </div>
+              <div class="coin-grid" aria-label="Pieces">
+                <label>
+                  PP
+                  <input id="coin-pp" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  PO
+                  <input id="coin-gp" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  PE
+                  <input id="coin-ep" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  PA
+                  <input id="coin-sp" type="number" min="0" inputmode="numeric" />
+                </label>
+                <label>
+                  PC
+                  <input id="coin-cp" type="number" min="0" inputmode="numeric" />
+                </label>
+              </div>
+              <label>
+                Objets rares
+                <textarea id="rare-items" rows="6"></textarea>
+              </label>
+              <label>
+                Dettes, faveurs, tresors
+                <textarea id="valuables" rows="5"></textarea>
+              </label>
+            </section>
+          </div>
+        </section>
+
+        <section id="panel-spells" class="tab-panel" role="tabpanel" aria-labelledby="tab-spells" data-panel="spells" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Grimoire</p>
+              <h2>Sorts connus</h2>
+            </div>
+            <span id="known-count" class="count-pill">0 connus</span>
+          </div>
+
+          <section class="panel" aria-labelledby="spell-filters-title">
+            <div class="panel-heading">
+              <h3 id="spell-filters-title">Recherche</h3>
+            </div>
+            <div class="spell-filters">
+              <label>
+                Nom
+                <input id="spell-search" autocomplete="off" />
+              </label>
+              <label>
+                Niveau
+                <select id="spell-level-filter">
+                  <option value="all">Tous</option>
+                  <option value="0">Tour de magie</option>
+                  <option value="1">Niveau 1</option>
+                  <option value="2">Niveau 2</option>
+                  <option value="3">Niveau 3</option>
+                  <option value="4">Niveau 4</option>
+                  <option value="5">Niveau 5</option>
+                  <option value="6">Niveau 6</option>
+                  <option value="7">Niveau 7</option>
+                  <option value="8">Niveau 8</option>
+                  <option value="9">Niveau 9</option>
+                </select>
+              </label>
+              <label>
+                Classe
+                <select id="spell-class-filter">
+                  <option value="all">Toutes</option>
+                  <option>Artificier</option>
+                  <option>Barde</option>
+                  <option>Clerc</option>
+                  <option>Druide</option>
+                  <option>Ensorceleur</option>
+                  <option>Magicien</option>
+                  <option>Occultiste</option>
+                  <option>Paladin</option>
+                  <option>Rodeur</option>
+                </select>
+              </label>
+              <label>
+                Type de degats
+                <select id="spell-damage-filter">
+                  <option value="all">Tous</option>
+                  <option value="none">Aucun / utilitaire</option>
+                  <option value="acid">Acide</option>
+                  <option value="bludgeoning">Contondant</option>
+                  <option value="cold">Froid</option>
+                  <option value="fire">Feu</option>
+                  <option value="force">Force</option>
+                  <option value="lightning">Foudre</option>
+                  <option value="necrotic">Necrotique</option>
+                  <option value="piercing">Perforant</option>
+                  <option value="poison">Poison</option>
+                  <option value="psychic">Psychique</option>
+                  <option value="radiant">Radiant</option>
+                  <option value="slashing">Tranchant</option>
+                  <option value="thunder">Tonnerre</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <div class="panel-grid two-columns">
+            <section class="panel" aria-labelledby="spell-library-title">
+              <div class="panel-heading">
+                <h3 id="spell-library-title">Bibliotheque</h3>
+              </div>
+              <div id="spell-library" class="spell-library"></div>
+            </section>
+
+            <section class="panel" aria-labelledby="homebrew-title">
+              <div class="panel-heading">
+                <h3 id="homebrew-title">Sort homebrew</h3>
+              </div>
+              <form id="homebrew-form" class="homebrew-form">
+                <label>
+                  Nom
+                  <input id="homebrew-name" autocomplete="off" />
+                </label>
+                <div class="form-grid">
+                  <label>
+                    Niveau
+                    <select id="homebrew-level">
+                      <option value="0">Tour de magie</option>
+                      <option value="1">Niveau 1</option>
+                      <option value="2">Niveau 2</option>
+                      <option value="3">Niveau 3</option>
+                      <option value="4">Niveau 4</option>
+                      <option value="5">Niveau 5</option>
+                      <option value="6">Niveau 6</option>
+                      <option value="7">Niveau 7</option>
+                      <option value="8">Niveau 8</option>
+                      <option value="9">Niveau 9</option>
+                    </select>
+                  </label>
+                  <label>
+                    Ecole
+                    <input id="homebrew-school" autocomplete="off" />
+                  </label>
+                </div>
+                <label>
+                  Classes
+                  <input id="homebrew-classes" autocomplete="off" placeholder="Magicien, Barde" />
+                </label>
+                <div class="form-grid">
+                  <label>
+                    Degats / effet court
+                    <input id="homebrew-damage" autocomplete="off" />
+                  </label>
+                  <label>
+                    Type de degats
+                    <select id="homebrew-damage-type">
+                      <option value="none">Aucun / utilitaire</option>
+                      <option value="acid">Acide</option>
+                      <option value="bludgeoning">Contondant</option>
+                      <option value="cold">Froid</option>
+                      <option value="fire">Feu</option>
+                      <option value="force">Force</option>
+                      <option value="lightning">Foudre</option>
+                      <option value="necrotic">Necrotique</option>
+                      <option value="piercing">Perforant</option>
+                      <option value="poison">Poison</option>
+                      <option value="psychic">Psychique</option>
+                      <option value="radiant">Radiant</option>
+                      <option value="slashing">Tranchant</option>
+                      <option value="thunder">Tonnerre</option>
+                    </select>
+                  </label>
+                </div>
+                <label>
+                  Notes
+                  <textarea id="homebrew-notes" rows="5"></textarea>
+                </label>
+                <button type="submit" class="primary-button">Creer et maitriser</button>
+              </form>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
