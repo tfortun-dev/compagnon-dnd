@@ -660,7 +660,7 @@ async function loadDefaultCharactersFromProject() {
       if (!response.ok) continue;
       const payload = await response.json();
       const { importedState, characterName } = normalizeCharacterPayload(payload, entry.id);
-      upsertPlayableCharacter({ id: entry.id, name: entry.name || characterName });
+      upsertPlayableCharacter({ id: entry.id, name: entry.name || characterName, file: entry.file });
 
       // Le JSON du projet sert de configuration par defaut.
       // Il est applique seulement si ce personnage n'a pas deja une sauvegarde locale.
@@ -1580,7 +1580,27 @@ function bindEvents() {
     input.addEventListener("input", renderSpellLibrary);
   });
 
-  $("#reset-character").addEventListener("click", () => {
+  $("#reset-character").addEventListener("click", async () => {
+    const activeEntry = PLAYABLE_CHARACTERS.find((c) => c.id === activeCharacterId);
+
+    try {
+      if (activeEntry?.file) {
+        const response = await fetch(`personnages/${activeEntry.file}`, { cache: "no-store" });
+
+        if (response.ok) {
+          const payload = await response.json();
+          const { importedState } = normalizeCharacterPayload(payload, activeCharacterId);
+
+          state = mergeState(getCharacterDefaultState(activeCharacterId), importedState);
+          saveState();
+          renderAll();
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("Erreur reset personnage:", error);
+    }
+
     state.character = getCharacterDefaultState(activeCharacterId).character;
     saveState();
     renderCharacter();
