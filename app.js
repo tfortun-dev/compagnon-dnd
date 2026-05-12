@@ -1,8 +1,9 @@
 const STORAGE_KEY = "fauche-lumiere-state-v2";
 const LEGACY_STORAGE_KEY = "fauche-lumiere-state";
 const ACTIVE_CHARACTER_KEY = "serment-active-character-id";
+const DEFAULT_CHARACTERS_MANIFEST_PATH = "personnages/personnages.json";
 
-const PLAYABLE_CHARACTERS = [
+let PLAYABLE_CHARACTERS = [
   { id: "timble", name: "Timble" },
   { id: "shamash", name: "Shamash" },
   { id: "salomon", name: "Salomon" },
@@ -12,6 +13,10 @@ const PLAYABLE_CHARACTERS = [
 
 let activeCharacterId =
   localStorage.getItem(ACTIVE_CHARACTER_KEY) || PLAYABLE_CHARACTERS[0].id;
+
+function hasSavedCharacter(characterId) {
+  return Boolean(localStorage.getItem(storageKeyForCharacter(characterId)));
+}
 
 function storageKeyForCharacter(characterId) {
   return `${STORAGE_KEY}-${characterId}`;
@@ -607,6 +612,74 @@ function switchCharacter(characterId) {
   renderAll();
 }
 
+
+
+function normalizeCharacterPayload(payload, fallbackId) {
+  const importedState = payload?.state || payload;
+  const characterName =
+    payload?.characterName || importedState?.character?.name || fallbackId || "Personnage";
+  return { importedState, characterName };
+}
+
+function upsertPlayableCharacter(character) {
+  if (!character?.id) return;
+  const existingIndex = PLAYABLE_CHARACTERS.findIndex((item) => item.id === character.id);
+  if (existingIndex >= 0) {
+    PLAYABLE_CHARACTERS[existingIndex] = {
+      ...PLAYABLE_CHARACTERS[existingIndex],
+      ...character,
+      name: character.name || PLAYABLE_CHARACTERS[existingIndex].name,
+    };
+  } else {
+    PLAYABLE_CHARACTERS.push({ id: character.id, name: character.name || character.id });
+  }
+}
+
+async function loadDefaultCharactersFromProject() {
+  let manifest;
+  try {
+    const response = await fetch(DEFAULT_CHARACTERS_MANIFEST_PATH, { cache: "no-store" });
+    if (!response.ok) return false;
+    manifest = await response.json();
+  } catch {
+    return false;
+  }
+
+  const entries = Array.isArray(manifest) ? manifest : manifest.characters || [];
+  let changed = false;
+
+  for (const entry of entries) {
+    if (!entry?.id) continue;
+    upsertPlayableCharacter({ id: entry.id, name: entry.name });
+    changed = true;
+
+    if (!entry.file) continue;
+
+    try {
+      const response = await fetch(`personnages/${entry.file}`, { cache: "no-store" });
+      if (!response.ok) continue;
+      const payload = await response.json();
+      const { importedState, characterName } = normalizeCharacterPayload(payload, entry.id);
+      upsertPlayableCharacter({ id: entry.id, name: entry.name || characterName });
+
+      // Le JSON du projet sert de configuration par defaut.
+      // Il est applique seulement si ce personnage n'a pas deja une sauvegarde locale.
+      if (!hasSavedCharacter(entry.id)) {
+        const defaultState = mergeState(getCharacterDefaultState(entry.id), importedState);
+        localStorage.setItem(storageKeyForCharacter(entry.id), JSON.stringify(defaultState));
+      }
+    } catch (error) {
+      console.error("Personnage par defaut non charge:", entry.file, error);
+    }
+  }
+
+  if (!PLAYABLE_CHARACTERS.some((character) => character.id === activeCharacterId)) {
+    activeCharacterId = PLAYABLE_CHARACTERS[0].id;
+    localStorage.setItem(ACTIVE_CHARACTER_KEY, activeCharacterId);
+  }
+
+  return changed;
+}
 
 function safeFileName(value) {
   return String(value || "personnage")
@@ -1516,3 +1589,9 @@ function bindEvents() {
 
 bindEvents();
 renderAll();
+
+loadDefaultCharactersFromProject().then((changed) => {
+  if (!changed) return;
+  state = loadState();
+  renderAll();
+});

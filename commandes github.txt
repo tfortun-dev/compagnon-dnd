@@ -1,0 +1,73 @@
+==============================
+COMPAGNON DND - GUIDE GITHUB
+==============================
+
+SITE EN LIGNE :
+https://tfortun-dev.github.io/compagnon-dnd/
+
+DEPOT GITHUB :
+https://github.com/tfortun-dev/compagnon-dnd
+
+
+=================================
+COMMENT METTRE LE SITE A JOUR
+=================================
+
+1. Modifier les fichiers du projet
+
+Le projet se trouve ici :
+
+Documents/compagnon dnd/compagnon-dnd-grimoire-details
+
+
+2. Ouvrir Git Bash
+
+
+3. Aller dans le dossier du projet
+
+cd Documents/"compagnon dnd"/compagnon-dnd-grimoire-details
+
+
+4. Envoyer les modifications sur GitHub
+
+git add .
+
+git commit -m "description des changements"
+
+git push
+
+
+=================================
+EXEMPLE
+=================================
+
+git add .
+
+git commit -m "Ajout nouveaux sorts"
+
+git push
+
+
+=================================
+IMPORTANT
+=================================
+
+- Le site NE se met PAS à jour automatiquement.
+- Il faut toujours faire :
+  git add .
+  git commit
+  git push
+
+- Après le push :
+  attendre environ 1 minute.
+
+- Le PC peut être éteint :
+  le site reste en ligne grâce à GitHub Pages.
+
+
+=================================
+SI GIT BASH NE S'OUVRE PAS
+=================================
+
+Réinstaller Git :
+https://git-scm.com/download/win

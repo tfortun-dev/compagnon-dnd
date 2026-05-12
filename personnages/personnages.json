@@ -1,0 +1,29 @@
+{
+  "characters": [
+    {
+      "id": "timble",
+      "name": "Timble",
+      "file": "timble.json"
+    },
+    {
+      "id": "shamash",
+      "name": "Shamash",
+      "file": "shamash.json"
+    },
+    {
+      "id": "salomon",
+      "name": "Salomon",
+      "file": "salomon.json"
+    },
+    {
+      "id": "sarcine",
+      "name": "Sarcine",
+      "file": "sarcine.json"
+    },
+    {
+      "id": "kaelen",
+      "name": "Kaelen",
+      "file": "kaelen.json"
+    }
+  ]
+}
